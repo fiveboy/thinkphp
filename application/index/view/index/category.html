@@ -1,0 +1,273 @@
+{extend name="public:base" /}
+
+{block name="title"}一色网在线播放,高清无码色情视频-{$data['type']}{/block}
+
+{block name="content"}
+
+<!-- 引入layui -->
+{load href="/public/static/plug-in/layui/css/layui.css" /}
+{load href="/public/static/plug-in/layui/layui.js" /}
+
+<style>
+    .content .post .post-thumb .video-stats .thumb-stats span { line-height: 30px; }
+    .column:last-child:not(:first-child), .columns:last-child:not(:first-child) { float: left; }
+</style>
+
+<!--breadcrumbs-->
+<section id="breadcrumb">
+    <div class="row">
+        <div class="large-12 columns">
+            <nav aria-label="You are here:" role="navigation">
+                <ul class="breadcrumbs">
+                    <li>
+                    	<a href="{:url('index')}">主页</a>
+                    </li>
+                    <li>
+                        <span class="show-for-sr">当前: </span> {$data['type']}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+<!--end breadcrumbs-->
+
+<section class="content" style="margin: 10px 0" id="category">
+    <!-- newest video -->
+    <div class="main-heading">
+        <div class="row secBg padding-14">
+            <div class="medium-8 small-8 columns">
+                <div class="head-title">
+                    <i class="fa fa-film"></i>
+                    <h4>{$data['type']}</h4>
+                </div>
+            </div>
+            <div class="medium-4 small-4 columns">
+                <ul class="tabs text-right pull-right" data-tabs id="newVideos">
+                    <li class="tabs-title is-active"><a href="#new-all">全部</a></li>
+                    <li class="tabs-title"><a href="#new-hd">高清</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row secBg">
+        <div class="large-12 columns">
+            <div class="row column head-text clearfix">
+                <p class="pull-left">全部视频 : <span>{{ total }}</span></p>
+                <!-- <div class="grid-system pull-right show-for-large">
+                    <a class="secondary-button current grid-default" href="#"><i class="fa fa-th"></i></a>
+                    <a class="secondary-button grid-medium" href="#"><i class="fa fa-th-large"></i></a>
+                    <a class="secondary-button list" href="#"><i class="fa fa-th-list"></i></a>
+                </div> -->
+            </div>
+            <div class="tabs-content" data-tabs-content="newVideos">
+                <!-- 全部 -->
+                <div class="tabs-panel is-active" id="new-all">
+                    <div class="row list-group">
+                        <div class="item large-3 medium-6 columns group-item-grid-default" v-for="item in renderdata">
+                            <div class="post thumb-border">
+                                <a :href="item.id">
+                                    <div class="post-thumb">
+                                        <img v-bind:src="item.img" v-bind:alt="item.title" onerror='this.src="/images/loaderr.jpg"'>
+                                        <a v-bind:href="item.id" class="hover-posts">
+                                            <span><i class="fa fa-play"></i>播放视频</span>
+                                        </a>
+                                        <div class="video-stats clearfix">
+                                            <div class="thumb-stats pull-left" v-if="item.is_hd == 1">
+                                                <h6>高清</h6>
+                                            </div>
+                                            <div class="thumb-stats pull-left">
+                                                <i class="fa fa-heart"></i>
+                                                <span>{{ item.fabulous }}</span>
+                                            </div>
+                                            <div class="thumb-stats pull-right">
+                                                <span>{{ item.time }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="post-des">
+                                    <h6><a v-bind:href="item.id">{{ item.title }}</a></h6>
+                                    <div class="post-stats clearfix">
+                                        <p class="pull-left">
+                                            <i class="fa fa-clock-o"></i>
+                                            <span>{{ item.create_time }}</span>
+                                        </p>
+                                        <p class="pull-left">
+                                            <i class="fa fa-eye"></i>
+                                            <span>{{ item.watch_count }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="post-summary">
+                                        {{ item.desc }}
+                                    </div>
+                                    <div class="post-button">
+                                        <a v-bind:href="item.id" class="secondary-button"><i class="fa fa-play-circle"></i>播放视频</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高清 -->
+                <div class="tabs-panel" id="new-hd">
+                    <div class="row list-group">
+                        <div class="item large-3 medium-6 columns group-item-grid-default" v-for="item in renderdata" v-if="item.is_hd == 1">
+                            <div class="post thumb-border">
+                                <a :href="item.id">
+                                    <div class="post-thumb">
+                                        <img v-bind:src="item.img" v-bind:alt="item.title">
+                                        <a v-bind:href="item.id" class="hover-posts">
+                                            <span><i class="fa fa-play"></i>播放视频</span>
+                                        </a>
+                                        <div class="video-stats clearfix">
+                                            <div class="thumb-stats pull-left">
+                                                <h6>高清</h6>
+                                            </div>
+                                            <div class="thumb-stats pull-left">
+                                                <i class="fa fa-heart"></i>
+                                                <span>{{ item.fabulous }}</span>
+                                            </div>
+                                            <div class="thumb-stats pull-right">
+                                                <span>{{ item.time }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="post-des">
+                                    <h6><a v-bind:href="item.id">{{ item.title }}</a></h6>
+                                    <div class="post-stats clearfix">
+                                        <p class="pull-left">
+                                            <i class="fa fa-clock-o"></i>
+                                            <span>{{ item.create_time }}</span>
+                                        </p>
+                                        <p class="pull-left">
+                                            <i class="fa fa-eye"></i>
+                                            <span>{{ item.watch_count }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="post-summary">
+                                        {{ item.desc }}
+                                    </div>
+                                    <div class="post-button">
+                                        <a v-bind:href="item.id" class="secondary-button"><i class="fa fa-play-circle"></i>播放视频</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nodata" style="padding-bottom: 30px; font-size: 25px; text-align: center; display: none;">
+                暂无视频~~~
+            </div>
+
+            <!-- 分页 -->
+            <div id="page-category" style="margin-bottom: 30px; text-align: center;"></div>
+			<!-- 分页结束 -->
+        </div>
+    </div>
+</section>
+
+<script>
+    var categoryvm = new Vue({
+        el: '#category',
+        data: {
+            renderdata: [],
+
+            // 分页条数
+            limit: 12,
+
+            // 总视频数
+            total: 0,
+        },
+        created: function() {
+            var u = '{:url("home/type")}',
+                d = {
+                    id: '{$data["id"]}',
+                    page: 1,
+                    limit: this.limit
+                },
+                _this = this
+
+            $.get(u, d, function(res) {
+                res = _this.playurl(res)
+
+                _this.renderdatafn(res)
+                _this.pagecategory(res)
+            })
+        },
+        methods: {
+            // 数据分页
+            pagecategory: function(res) {
+                var _this = this
+
+                // 分页
+                layui.use('laypage', function() {
+                    var laypage = layui.laypage
+
+                    laypage.render({
+                        elem: 'page-category',
+                        limit: _this.limit,
+                        count: res.count,
+                        theme: '#e96969',
+                        layout: ['prev', 'page', 'next', 'skip'],
+                        jump: function(obj, first) {
+                            var u = '{:url("home/type")}',
+                                d = {
+                                    id: '{$data["id"]}',
+                                    page: obj.curr,
+                                    limit: this.limit
+                                }
+
+                            $.get(u, d, function(res) {
+                                res = _this.playurl(res)
+
+                                _this.renderdatafn(res)
+                            })
+                        }
+                    })
+                })
+            },
+
+            // 过滤html标签
+            filterHTML: function(msg) {
+                var msg = msg.replace(/<\/?[^>]*>/g, ''); //去除HTML Tag
+                msg = msg.replace(/[|]*\n/, '') //去除行尾空格
+                msg = msg.replace(/&nbsp;/ig, ''); //去掉npsp
+                return msg;
+            },
+
+            // 数据渲染
+            renderdatafn: function(res) {
+                var nodata = document.getElementById('nodata'),
+                    opage  = document.getElementById('page-category')
+
+                for (var i=0; i<res.data.length; i++) {
+                    res.data[i].desc = this.filterHTML(res.data[i].desc)
+                }
+
+                Vue.set(categoryvm, 'renderdata', res.data)
+                Vue.set(categoryvm, 'total', res.count)
+                
+                // 暂无数据
+                if (res.data.length === 0) {
+                    nodata.style.display = 'block'
+                    opage.style.display = 'none'
+                }
+            },
+
+            // 添加视频播放id
+            playurl: function(res) {
+                for (var i=0; i<res.data.length; i++) {
+                    res.data[i].id = '/play?playid=' + res.data[i].id
+                }
+
+                return res
+            }
+        }
+    })
+</script>
+{/block}

@@ -1,0 +1,212 @@
+{extend name="public:base" /}
+
+{block name="content"}
+<!-- 轮播图插件 -->
+{load href="/public/static/plug-in/jQuerySwipeslider/css/style.css" /}
+{load href="/public/static/plug-in/jQuerySwipeslider/dist/swipeslider.css" /}
+
+<link rel="prefetch" href="/images/loaderr.jpg" />
+<!-- 轮播图插件结束 -->
+<style>
+    .column:last-child:not(:first-child), .columns:last-child:not(:first-child) { float: left; }
+
+    /* 重写轮播图 */
+    #slider {}
+    #full-feature { height: 350px; max-width: 75rem; margin: 0 auto; padding: 0 !important; }
+    #full-feature ul { margin: 0; }
+    #full-feature img { width: 100%; height: 100%; }
+    #full-feature .sw-next, #full-feature .sw-prev { display: none; }
+    @media screen and (max-width: 1000px) { 
+        #full-feature { height: 200px; width: 100%; } 
+    }
+
+    #premium { max-width: 75rem; margin: 14px auto; }
+    #premium .heading { padding: 14px 0; }
+    
+    /* 重写布局 */
+    .secBg { border: 0; }
+    .content>.secBg {  margin-top: 20px; }
+    .content .main-heading { border-bottom: 1px solid #ececec; }
+</style>
+
+<!-- layerslider h:500px 轮播 -->
+<section id="slider">
+    <div id="full-feature" class="swipslider">
+        <ul class="sw-slides">
+            {foreach $slider as $k => $v }
+                <li class="sw-slide">
+                    <a href="{$v.jump}" target="_blank">
+                        <img src="{$v.img}" onerror='this.src="/images/errorimg.jpg"'>
+                    </a>
+                </li>
+            {/foreach}
+        </ul>
+    </div>
+</section>
+<!--end slider-->
+
+<!-- 推荐 -->
+<div id="home">
+<section id="premium" class="content" v-for="ihead in hometype">
+    <div class="main-heading">
+        <div class="row secBg padding-14">
+            <div class="medium-8 small-8 columns">
+                <div class="head-title">
+                    <i class="fa" :class="ihead.icon"></i>
+                    <h4>{{ ihead.title }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 内容 -->
+    <div class="row secBg">
+        <div class="large-12 columns">
+            <div class="tabs-content">
+                <!-- 全部 -->
+                <div class="tabs-panel is-active">
+                    <div class="row list-group">
+                        <div class="item large-3 medium-6 columns group-item-grid-default" v-for="item in ihead.data">
+                            <div class="post thumb-border">
+                                <a :href="item.id">
+                                    <div class="post-thumb">
+                                        <img v-bind:src="item.img" alt="item.title" onerror='this.src="/images/loaderr.jpg"'>
+                                        <a v-bind:href="item.id" class="hover-posts">
+                                            <span><i class="fa fa-play"></i>播放视频</span>
+                                        </a>
+                                        <div class="video-stats clearfix">
+                                            <div class="thumb-stats pull-left" v-if="item.is_hd == 1">
+                                                <h6>高清</h6>
+                                            </div>
+                                            <div class="thumb-stats pull-left">
+                                                <i class="fa fa-heart"></i>
+                                                <span>{{ item.fabulous }}</span>
+                                            </div>
+                                            <div class="thumb-stats pull-right">
+                                                <span>{{ item.time }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="post-des">
+                                    <h6><a v-bind:href="item.id">{{ item.title }}</a></h6>
+                                    <div class="post-stats clearfix">
+                                        <p class="pull-left">
+                                            <i class="fa fa-clock-o"></i>
+                                            <span>{{ item.create_time }}</span>
+                                        </p>
+                                        <p class="pull-left">
+                                            <i class="fa fa-eye"></i>
+                                            <span>{{ item.watch_count }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 全部end -->
+            </div>
+        </div>
+    </div>
+    <!-- 内容end -->
+</section>
+</div>
+<!-- End main content -->
+
+<!-- 轮播插件 -->
+{load href="/public/static/plug-in/jQuerySwipeslider/dist/swipeslider.min.js" /}
+<!-- js -->
+<script>
+    var homevm = new Vue({
+        el: '#home',
+        data: {
+            // 主页分类
+            hometype: [{
+                icon: 'fa-play-circle-o',
+                title: '特别推荐',
+                data: 'premium'
+            }, {
+                icon: 'fa-film',
+                title: '最新视频',
+                data: 'newvideos'
+            }, {
+                icon: 'fa-star',
+                title: '热门影视',
+                data: 'hot'
+            }],
+        },
+        created: function() {
+            this.slider()
+            this.premiumfn()
+            this.newvideosfn()
+            this.hotfn()
+
+            this.statistics()
+        },
+        methods: {
+            // 统计访问量
+            statistics: function() {
+                $.get('{:url("home/statistics")}')
+            },
+
+            // 轮播插件
+            slider: function() {
+                $('#full-feature').swipeslider();
+            },
+
+            // 特别推荐
+            premiumfn: function() {
+                var u = '{:url("home/recommend")}',
+                    t = this
+
+                $.get(u, function(res) {
+                    res = t.playurl(res)
+
+                    Vue.set(homevm.hometype[0], 'data', res.data)
+                })
+            },
+
+            // 过滤html标签
+            filterHTML: function(msg) {
+                var msg = msg.replace(/<\/?[^>]*>/g, ''); //去除HTML Tag
+                msg = msg.replace(/[|]*\n/, '') //去除行尾空格
+                msg = msg.replace(/&npsp;/ig, ''); //去掉npsp
+                return msg;
+            },
+
+            // 最新视频
+            newvideosfn: function() {
+                var u = '{:url("home/newVideo")}',
+                    t = this
+
+                $.get(u, function(res) {
+                    res = t.playurl(res)
+
+                    Vue.set(homevm.hometype[1], 'data', res.data)
+                })
+            },
+
+            // 热门影视
+            hotfn: function() {
+                var u = '{:url("home/hotVideo")}',
+                    t = this
+
+                $.get(u, function(res) {
+                    res = t.playurl(res)
+
+                    Vue.set(homevm.hometype[2], 'data', res.data)
+                })
+            },
+
+            // 添加视频播放id
+            playurl: function(res) {
+                for (var i=0; i<res.data.length; i++) {
+                    res.data[i].id = '/play?playid=' + res.data[i].id
+                }
+
+                return res
+            }
+        }
+    })
+</script>
+{/block}

@@ -1,0 +1,80 @@
+<div class="layui-side layui-side-menu">
+    <div class="layui-side-scroll">
+        <div class="layui-logo" lay-href="{:url('index/console')}">
+            <span>后台管理</span>
+        </div>
+
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
+
+            <li data-name="home" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="主页" lay-direction="2">
+                    <i class="layui-icon layui-icon-home"></i>
+                    <cite>主页</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a lay-href="{:url('index/console')}">控制台</a></dd>
+                    <dd><a lay-href="{:url('index/datainfo')}">数据信息</a></dd>
+                </dl>
+            </li>
+
+            <li data-name="template" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="视频分类" lay-direction="2">
+                    <i class="layui-icon layui-icon-template"></i>
+                    <cite>分类管理</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a lay-href="{:url('classify/video')}">视频分类</a></dd>
+                    <!-- <dd><a lay-href="{:url('classify/add')}">主页分类</a></dd> -->
+                </dl>
+            </li>
+
+            <li data-name="senior" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="视频管理" lay-direction="2">
+                    <i class="layui-icon layui-icon-video"></i>
+                    <cite>视频管理</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a lay-href="{:url('video/index')}">视频列表</a>
+                    </dd>
+                    <dd>
+                        <a lay-href="{:url('video/upload')}">视频上传</a>
+                    </dd>
+                </dl>
+            </li>
+
+            <li data-name="app" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="友情链接" lay-direction="2">
+                    <i class="layui-icon layui-icon-senior"></i>
+                    <cite>友情链接</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a onclick="layer.tips('尚未开放', this);">链接列表</a>
+                    </dd>
+                    <dd>
+                        <a onclick="layer.tips('尚未开放', this);">链接添加</a>
+                    </dd>
+                </dl>
+            </li>
+
+            <li data-name="app" class="layui-nav-item">
+                <a href="javascript:;" lay-tips="网站设置" lay-direction="2">
+                    <i class="layui-icon layui-icon-set"></i>
+                    <cite>网站设置</cite>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="javascript:;" onclick="layer.tips('尚未开放', this);">基础设置</a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:;" onclick="layer.tips('尚未开放', this);">域名设置</a>
+                    </dd>
+                    <dd>
+                        <a lay-href="{:url('slider/index')}">轮播图设置</a>
+                    </dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+<header>
+    <style>
+        .menu-text>a>div { color: red; }
+        .menu-text>a>div:nth-child(1) { font-size: 1rem; }
+    </style>
+
+    <!--Navber-->
+    <section id="navBar">
+        <nav class="sticky-container" data-sticky-container>
+            <div class="sticky topnav" data-sticky data-top-anchor="navBar" data-btm-anchor="footer-bottom:bottom" data-margin-top="0" data-margin-bottom="0" style="width: 100%; background: #fff;" data-sticky-on="large">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div class="title-bar" data-responsive-toggle="beNav" data-hide-for="large">
+                            <button class="menu-icon" type="button" data-toggle="offCanvas-responsive"></button>
+                            <div class="title-bar-title">
+                                <img src="/images/logo-small.png" alt="logo">
+                            </div>
+                        </div>
+
+                        <div class="top-bar show-for-large" id="beNav" style="width: 100%;">
+                            <div class="top-bar-left">
+                                <ul class="menu">
+                                    <li class="menu-text">
+                                        <a href="{:url('index')}">
+                                            <img src="/images/logo.png" alt="logo">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="top-bar-right search-btn">
+                                <ul class="menu">
+                                    <li class="search">
+                                        <i class="fa fa-search"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="top-bar-right">
+                                <ul class="menu vertical medium-horizontal" data-responsive-menu="drilldown medium-dropdown">
+                                    <li class="has-submenu pc-nav active">
+                                        <a href="{:url('index')}">主页</a>
+                                    </li>
+                                    <li class="has-submenu pc-nav" v-for="item in nav">
+                                        <span style="display: none">{{ item.id }}</span>
+                                        <a v-bind:href="item.url">{{ item.type }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="search-bar" class="clearfix search-bar-light">
+                    <div method="post">
+                        <div class="search-input float-left">
+                            <input type="search" name="search" placeholder="请输入要搜索的视频关键字">
+                        </div>
+                        <div class="search-btn float-right text-right">
+                            <button class="button" @click="search">全站搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </section>
+</header>
+
+<script>
+    var pcvm = new Vue({
+        el: "#navBar",
+        data: {
+            // 导航条
+            nav: []
+        },
+        beforeCreate: function() {
+            var u = '{:url("home/classify")}'
+
+            $.get(u, function(res) {
+                var newres = [];
+
+                for (var i in res) {
+                    var temp = {
+                        url: "/category?id="+ res[i].id +"&type="+ res[i].type,
+                        type: res[i].type,
+                        id: res[i].id
+                    };
+
+                    newres.push(temp)
+                }
+
+                // 设置导航
+                Vue.set(pcvm, 'nav', newres)
+            })
+        },
+        // 数据更新之后
+        updated: function() {
+            this.navchange()
+        },
+        methods: {
+            // 导航切换设置
+            navchange: function() {
+                var id = this.getUrlParam('id'),
+                    nav = document.getElementsByClassName('pc-nav')
+                
+                for (var i=0; i<nav.length; i++) {
+                    // 先取消当前active
+                    nav[i].setAttribute('class', 'has-submenu pc-nav')
+
+                    // 再添加当前的active
+                    if (parseInt(id) == parseInt(nav[i].children[0].innerHTML)) {
+                        nav[i].setAttribute('class', 'has-submenu pc-nav active')
+                    } 
+                }
+
+                // 如果id为空的话表示是主页
+                if (id == null) {
+                    nav[0].setAttribute('class', 'has-submenu pc-nav active')
+                }
+            },
+
+            // 获取url后参数
+            getUrlParam: function(name) {
+                var urlPar = window.location.search;
+
+                if (urlPar.indexOf("?") != -1) {
+                    var str = urlPar.substr(1);
+                    strs = str.split("&");
+
+                    for (var i=0; i<strs.length; i++) {
+                        pStrs = strs[i].split('=')
+
+                        if (pStrs[0] == name) {
+                            return pStrs[1]
+                        }
+                    }
+                }
+
+                return null
+            },
+
+            // 搜索
+            search: function() {
+                var u = '/search?keyword=' + $('[name=search]').val()
+
+                window.location.href = u
+            }
+        }
+    });
+</script>
